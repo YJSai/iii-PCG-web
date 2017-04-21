@@ -1,0 +1,248 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@section style
+{
+    @*CSS放這裡*@
+}
+<h1>統計報表</h1>
+<hr />
+<div class="well">
+
+    @using (Html.BeginForm("Index", "Factory", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ProductList" }))
+    {
+        <div class="row">
+
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">地區：</label>
+                <div class="col-lg-8">
+                    @Html.DropDownList("Country", (SelectList)ViewBag.SelectList, "請選擇地區", new { id = "Country", @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">廠別：</label>
+                <div class="col-lg-8">
+                    <select id="Factory" name="Factory" class="form-control"><option>------</option></select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">起始月份：</label>
+                <div class="col-lg-8">
+                    <select id="Mon1" name="Mon1" class="form-control"><option>------</option></select>
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">結束月份：</label>
+                <div class="col-lg-8">
+                    <select id="Mon2" name="Mon2" class="form-control"><option>------</option></select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-5">
+                <button type="button" id="btnSearch" class="btn btn-primary"><i class="icon_search"></i>&nbsp查詢</button>
+            </div>
+        </div>
+    }
+</div>
+<hr />
+<div>
+    <button type="button" id="btnExport" name="btnExport" class="btn btn-success"><i class="icon_download"></i>&nbsp匯出Excel</button>
+    <a href="~/Chart/Index" class="btn btn-info" role="button">出勤統計繪圖</a><br /><br />
+</div>
+<table class="table table-striped talbe-advance table-hover" id="thistable">
+    <tr>
+        <th><i class="icon_house"></i>&nbsp廠別</th>
+        <th><i class="icon_calendar"></i>&nbsp年月</th>
+        <th><i class="icon_group"></i>&nbsp月底人數</th>
+        <th><i class="icon_plus_alt2"></i>&nbsp當月新進人數</th>
+        <th><i class="icon_minus_alt2"></i>&nbsp當月離職人數（正式員工）</th>
+        <th><i class="icon_minus_alt2"></i>&nbsp當月離職人數（試用期）</th>
+        <th><i class="icon_minus_alt2"></i>&nbsp離職率</th>
+        <th><i class="icon_pencil-edit"></i>&nbsp資料編輯</th>
+    </tr>
+</table>
+
+@section scripts{
+    @*JavaScript放這裡*@
+    <script src="~/scripts/bootbox.js"></script>
+    <script src="@RouteJs.RouteJsHandler.HandlerUrl"></script>
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            $('#Country').select2();
+            $('#Factory').select2();
+            $('#Mon1').select2();
+            $('#Mon2').select2();
+            //----------2：第一個下拉選單選擇後會牽動第二個下拉選單------------
+            $('#Country').change(function () {
+                $('#Mon1').empty();
+                $('#Mon1').append($('<option></option>').val('').text('------'));
+                $('#Mon2').empty();
+                $('#Mon2').append($('<option></option>').val('').text('------'));
+                $("#tabletable").empty();
+                var selectedValue = $('#Country option:selected').val();
+                if ($.trim(selectedValue).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("Facs", "AttE")',
+                        data: { ZoneID: selectedValue },
+                        type: 'post',
+                        cache: false,
+                        async: true,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $('#Factory').empty();
+                                $('#Factory').append($('<option></option>').val('').text('請選擇廠別'));
+                                $.each(data, function (i, item) {
+                                    $('#Factory').append($('<option></option>').val(item.Key).text(item.Value));
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            //------3：第二個下拉選單選擇後會牽動第三個下拉選單------//
+            $('#Factory').change(function () {
+                $("#tabletable").empty();
+                $('#Mon2').empty();
+                $('#Mon2').append($('<option></option>').val('').text('------'));
+                var selectedValue = $('#Factory option:selected').val();
+                if ($.trim(selectedValue).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("Month1", "AttE")',
+                        data: { FacID: selectedValue },
+                        type: 'post',
+                        cache: false,
+                        async: true,
+                        dataType: 'json',
+                        success: function (data) {
+                            $('#Mon1').empty();
+                            $('#Mon1').append($('<option></option>').val('').text('請選擇起始月份'));
+                            $.each(data, function (i, item) {
+                                $('#Mon1').append($('<option></option>').val(item.Key).text(item.Value));
+                            });
+                        }
+                    });
+                }
+            });
+            //------4：第三個下拉選單選擇後會牽動第四個下拉選單------//
+            $('#Mon1').change(function () {
+                $("#tabletable").empty();
+                var selectedValue1 = $('#Factory option:selected').val();
+                var selectedValue2 = $('#Mon1 option:selected').val();
+                if ($.trim(selectedValue2).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("Month2", "AttE")',
+                        data: { Date: selectedValue2, FacID: selectedValue1 },
+                        type: 'post',
+                        cache: false,
+                        async: true,
+                        dataType: 'json',
+                        success: function (data) {
+                            $('#Mon2').empty();
+                            $('#Mon2').append($('<option></option>').val('').text('請選擇結束月份'));
+                            $.each(data, function (i, item) {
+                                $('#Mon2').append($('<option></option>').val(item.Key).text(item.Value));
+                            });
+                        }
+                    });
+                }
+            });
+            //---------btnclick----
+            $('#btnSearch').click(function () {
+                var sv1 = $('#Factory option:selected').val();
+                var sv2 = $('#Mon1 option:selected').val();
+                var sv3 = $('#Mon2 option:selected').val();
+                var sv4 = $('#Country option:selected').val();
+                $.ajax({
+                    url: '@Url.Action("Lists", "AttE")',
+                    data: { Date1: sv2, Date2: sv3, FacID: sv1 ,Country: sv4},
+                    type: 'post',
+                    cache: false,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            $('#thistable').empty();
+                            $tr = $('<tr>').append(
+                            $('<th>').html('<i class="icon_house"></i>&nbsp廠別'),
+                            $('<th>').html('<i class="icon_calendar"></i>&nbsp年月'),
+                            $('<th>').html('<i class="icon_group"></i>&nbsp月底人數'),
+                            $('<th>').html('<i class="icon_plus_alt2"></i>&nbsp當月新進人數'),
+                            $('<th>').html('<i class="icon_minus_alt2"></i>&nbsp當月離職人數（正式員工）'),
+                            $('<th>').html('<i class="icon_minus_alt2"></i>&nbsp當月離職人數（試用期）'),
+                            $('<th>').html('<i class="icon_minus_alt2"></i>&nbsp離職率')
+                            ).appendTo('#thistable');
+                            $.each(data, function (i, item) {
+                                var x1 = ((parseInt(item.PopLeft) + parseInt(item.PopLeft3)) / parseInt(item.PopTotal)) * 100;
+                                var x2 = (x1.toFixed(1)).toString();
+                                $tr = $('<tr>').append(
+                $('<td>').text(item.FacName),
+                $('<td>').text(item.Date),
+                $('<td>').text(item.PopTotal),
+                $('<td>').text(item.PopNew),
+                $('<td>').text(item.PopLeft),
+                $('<td>').text(item.PopLeft3),
+                $('<td>').text(x2 + '%')
+            ).appendTo('#thistable');
+                            });
+                        }
+                    }
+                });
+            });//end of buttonclick
+            $('#btnExport').click(function () {
+                var HasData = 'False';
+                var sv1 = $('#Factory option:selected').val();
+                var sv2 = $('#Mon1 option:selected').val();
+                var sv3 = $('#Mon2 option:selected').val();
+                var sv4 = $('#Country option:selected').val();
+                ExportData(sv1, sv2, sv3,sv4);
+            });
+            function ExportData(sv1,sv2,sv3,sv4) {
+                //資料匯出
+                $.ajax({
+                    type: 'post',
+                    url: '@Url.Action("HasData", "AttE")',
+                    data: { Date1: sv2, Date2: sv3, FacID: sv1,Country: sv4},
+                    dataType: 'json',
+                    cache: false,
+                    async: true,
+                    success: function (data) {
+                        if (data.Msg) {
+                            HasData = data.Msg;
+                            if (HasData == 'False') {
+                                AlertErrorMessage("錯誤", "尚未建立任何資料, 無法匯出資料.");
+                            }
+                            else {
+                                window.location = Router.action("AttE", "Export", { Date1: sv2, Date2: sv3, FacID: sv1,Country: sv4 });
+                            }
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        AlertErrorMessage("錯誤", "資料匯出錯誤");
+                    }
+                });
+            }
+
+            function AlertErrorMessage(title, message) {
+                //使用 Bootbox.js 的錯誤訊息顯示
+                bootbox.dialog({
+                    title: title,
+                    message: message,
+                    buttons: {
+                        danger: {
+                            label: "確認",
+                            className: "btn-danger"
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

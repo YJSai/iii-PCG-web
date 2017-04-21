@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="PCGModelStoreContainer" CdmEntityContainer="PCGEntities">
+    <EntitySetMapping Name="Announcement">
+      <EntityTypeMapping TypeName="PCGModel.Announcement">
+        <MappingFragment StoreEntitySet="Announcement">
+          <ScalarProperty Name="ancContent" ColumnName="ancContent" />
+          <ScalarProperty Name="ancTitle" ColumnName="ancTitle" />
+          <ScalarProperty Name="ancDate" ColumnName="ancDate" />
+          <ScalarProperty Name="publisher" ColumnName="publisher" />
+          <ScalarProperty Name="ancID" ColumnName="ancID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FacPopulation">
+      <EntityTypeMapping TypeName="PCGModel.FacPopulation">
+        <MappingFragment StoreEntitySet="FacPopulation">
+          <ScalarProperty Name="PopLeft3" ColumnName="PopLeft3" />
+          <ScalarProperty Name="PopLeft" ColumnName="PopLeft" />
+          <ScalarProperty Name="PopNew" ColumnName="PopNew" />
+          <ScalarProperty Name="PopTotal" ColumnName="PopTotal" />
+          <ScalarProperty Name="FacID" ColumnName="FacID" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="PopID" ColumnName="PopID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Administrators">
+      <EntityTypeMapping TypeName="PCGModel.Administrators">
+        <MappingFragment StoreEntitySet="Administrators">
+          <ScalarProperty Name="Role" ColumnName="Role" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="Account" ColumnName="Account" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Character" ColumnName="Character" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="FacID" ColumnName="FacID" />
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Factories">
+      <EntityTypeMapping TypeName="PCGModel.Factories">
+        <MappingFragment StoreEntitySet="Factories">
+          <ScalarProperty Name="Supervisor" ColumnName="Supervisor" />
+          <ScalarProperty Name="EditTime" ColumnName="EditTime" />
+          <ScalarProperty Name="ZoneID" ColumnName="ZoneID" />
+          <ScalarProperty Name="FacName" ColumnName="FacName" />
+          <ScalarProperty Name="FacID" ColumnName="FacID" />
+          <ScalarProperty Name="FacNo" ColumnName="FacNo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MaintenanceChart">
+      <EntityTypeMapping TypeName="PCGModel.MaintenanceChart">
+        <MappingFragment StoreEntitySet="MaintenanceChart">
+          <ScalarProperty Name="IFMaintenance" ColumnName="IFMaintenance" />
+          <ScalarProperty Name="Month" ColumnName="Month" />
+          <ScalarProperty Name="Year" ColumnName="Year" />
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+          <ScalarProperty Name="MCID" ColumnName="MCID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Permission">
+      <EntityTypeMapping TypeName="PCGModel.Permission">
+        <MappingFragment StoreEntitySet="Permission">
+          <ScalarProperty Name="FacNo" ColumnName="FacNo" />
+          <ScalarProperty Name="ZoneID" ColumnName="ZoneID" />
+          <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+          <ScalarProperty Name="PermissionID" ColumnName="PermissionID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Zone">
+      <EntityTypeMapping TypeName="PCGModel.Zone">
+        <MappingFragment StoreEntitySet="Zone">
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="ZoneID" ColumnName="ZoneID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

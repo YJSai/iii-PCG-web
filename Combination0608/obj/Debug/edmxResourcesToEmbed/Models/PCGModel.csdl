@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PCGModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="PCGEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Announcement" EntityType="PCGModel.Announcement" />
+    <EntitySet Name="FacPopulation" EntityType="PCGModel.FacPopulation" />
+    <EntitySet Name="Administrators" EntityType="PCGModel.Administrators" />
+    <EntitySet Name="Factories" EntityType="PCGModel.Factories" />
+    <EntitySet Name="MaintenanceChart" EntityType="PCGModel.MaintenanceChart" />
+    <EntitySet Name="Permission" EntityType="PCGModel.Permission" />
+    <EntitySet Name="Zone" EntityType="PCGModel.Zone" />
+    <AssociationSet Name="FK__Factories__Super__3B75D760" Association="PCGModel.FK__Factories__Super__3B75D760">
+      <End Role="Administrators" EntitySet="Administrators" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Factories__ZoneI__3C69FB99" Association="PCGModel.FK__Factories__ZoneI__3C69FB99">
+      <End Role="Zone" EntitySet="Zone" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Factories__ZoneI__3D5E1FD2" Association="PCGModel.FK__Factories__ZoneI__3D5E1FD2">
+      <End Role="Zone" EntitySet="Zone" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Announcement">
+    <Key>
+      <PropertyRef Name="ancID" />
+    </Key>
+    <Property Name="ancID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="publisher" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ancDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="ancTitle" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ancContent" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="FacPopulation">
+    <Key>
+      <PropertyRef Name="PopID" />
+    </Key>
+    <Property Name="PopID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Date" Type="String" Nullable="false" MaxLength="7" FixedLength="false" Unicode="true" />
+    <Property Name="FacID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="PopTotal" Type="Int32" Nullable="false" />
+    <Property Name="PopNew" Type="Int32" Nullable="false" />
+    <Property Name="PopLeft" Type="Int32" Nullable="false" />
+    <Property Name="PopLeft3" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Administrators">
+    <Key>
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="EmployeeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FacID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Character" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Account" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Password" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Role" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+    <NavigationProperty Name="Factories" Relationship="PCGModel.FK__Factories__Super__3B75D760" FromRole="Administrators" ToRole="Factories" />
+  </EntityType>
+  <EntityType Name="Factories">
+    <Key>
+      <PropertyRef Name="FacNo" />
+    </Key>
+    <Property Name="FacNo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FacID" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="FacName" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="ZoneID" Type="Int32" />
+    <Property Name="EditTime" Type="DateTime" Precision="0" />
+    <Property Name="Supervisor" Type="Int32" />
+    <NavigationProperty Name="Administrators" Relationship="PCGModel.FK__Factories__Super__3B75D760" FromRole="Factories" ToRole="Administrators" />
+    <NavigationProperty Name="Zone" Relationship="PCGModel.FK__Factories__ZoneI__3C69FB99" FromRole="Factories" ToRole="Zone" />
+    <NavigationProperty Name="Zone1" Relationship="PCGModel.FK__Factories__ZoneI__3D5E1FD2" FromRole="Factories" ToRole="Zone" />
+  </EntityType>
+  <EntityType Name="MaintenanceChart">
+    <Key>
+      <PropertyRef Name="MCID" />
+    </Key>
+    <Property Name="MCID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmployeeID" Type="Int32" />
+    <Property Name="Year" Type="Int32" />
+    <Property Name="Month" Type="Int32" />
+    <Property Name="IFMaintenance" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Permission">
+    <Key>
+      <PropertyRef Name="PermissionID" />
+    </Key>
+    <Property Name="PermissionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EmployeeID" Type="Int32" Nullable="false" />
+    <Property Name="ZoneID" Type="Int32" Nullable="false" />
+    <Property Name="FacNo" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Zone">
+    <Key>
+      <PropertyRef Name="ZoneID" />
+    </Key>
+    <Property Name="ZoneID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Country" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Factories" Relationship="PCGModel.FK__Factories__ZoneI__3C69FB99" FromRole="Zone" ToRole="Factories" />
+    <NavigationProperty Name="Factories1" Relationship="PCGModel.FK__Factories__ZoneI__3D5E1FD2" FromRole="Zone" ToRole="Factories" />
+  </EntityType>
+  <Association Name="FK__Factories__Super__3B75D760">
+    <End Type="PCGModel.Administrators" Role="Administrators" Multiplicity="0..1" />
+    <End Type="PCGModel.Factories" Role="Factories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Administrators">
+        <PropertyRef Name="EmployeeID" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="Supervisor" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Factories__ZoneI__3C69FB99">
+    <End Type="PCGModel.Zone" Role="Zone" Multiplicity="0..1" />
+    <End Type="PCGModel.Factories" Role="Factories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Zone">
+        <PropertyRef Name="ZoneID" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="ZoneID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Factories__ZoneI__3D5E1FD2">
+    <End Type="PCGModel.Zone" Role="Zone" Multiplicity="0..1" />
+    <End Type="PCGModel.Factories" Role="Factories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Zone">
+        <PropertyRef Name="ZoneID" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="ZoneID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

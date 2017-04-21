@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Combination0608.Models.Announcement>
+@{
+    ViewBag.Title = "List";
+}
+@section style
+{ }
+<h2>歷史公告</h2>
+<table class="table table-striped talbe-advance table-hover" id="ancTable">
+    <tr>
+        <th class="col-lg-2 col-md-1 col-sm-1">
+            公告人
+        </th>
+        <th class="col-lg-2 col-md-1 col-sm-1">
+            公告日期
+        </th>
+        <th class="col-lg-8 col-md-10 col-sm-10">
+            公告標題
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.publisher)
+            </td>
+            <td>
+                @item.ancDate.ToShortDateString()
+            </td>
+            <td>
+                @Html.ActionLink(@item.ancTitle, "Details", new { id = item.ancID }, new { @class = "fancybox fancybox.iframe" })
+            </td>
+        </tr>
+    }
+</table>
+
+@section scripts{
+    <script>
+        $('.fancybox').fancybox({
+            'afterClose': function () {
+                window.location.reload();
+            }
+        });
+    </script>
+}

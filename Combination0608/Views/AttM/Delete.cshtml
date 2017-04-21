@@ -1,0 +1,88 @@
+﻿@model Combination0608.Models.FacPopulation
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section style
+{
+    @*CSS*@
+}
+<h2>確認刪除資料</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            年月
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+        <dt>
+            廠別
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FacID)
+        </dd>
+
+        <dt>
+            月底總人數
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PopTotal)
+        </dd>
+
+        <dt>
+            當月新進人數
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PopNew)
+        </dd>
+
+        <dt>
+            當月離職人數<br />（正式員工）
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PopLeft)
+        </dd>
+
+        <dt>
+            當月離職人數<br />（試用期）
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PopLeft3)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="刪除" class="btn btn-danger"/>
+            <input type="button" id="btnExit" value="離開" class="btn btn-default" />
+        </div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            window.onsubmit = function () {
+                parent.$.fancybox.close();
+            };
+            $('#btnExit').click(function () {
+                parent.$.fancybox.close();
+            });
+        });
+    </script>
+    }

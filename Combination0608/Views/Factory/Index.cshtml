@@ -1,0 +1,289 @@
+﻿@using PagedList.Mvc
+@model Combination0608.ViewModels.FactoryListViewModel
+@{
+    ViewBag.Title = "Index";
+}
+
+@section style
+{
+<style>
+/*搜尋與取消按鈕*/
+        .twobtn {   
+        margin-left: 45%;
+
+    }
+    </style>
+    <link href="~/Content/PagedList.css" rel="stylesheet" />  }
+<h1>廠別管理</h1>
+
+<!-- modal placeholder-->
+<div id='myModal' class='modal fade in'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id='myModalContent'></div>
+        </div>
+    </div>
+</div>
+
+
+<div class="well">
+
+    @using (Html.BeginForm("Index", "Factory", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ProductList" }))
+
+    {
+
+        <div class="row">
+
+            <div class="col-md-6 form-group">
+
+                <label class="col-lg-3 control-label">廠別代碼：</label>
+
+                <div class="col-lg-8">
+
+                    @Html.EditorFor(x => x.SearchParaMeter.FactoryID, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 form-group">
+
+                <label class="col-lg-3 control-label">廠別名稱：</label>
+
+                <div class="col-lg-8">
+
+                    @Html.EditorFor(x => x.SearchParaMeter.FactoryName, new { htmlAttributes = new { @class = "form-control" } })
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">地區：</label>
+                <div class="col-lg-8">
+
+                    @Html.DropDownListFor(x => x.SearchParaMeter.ZoneID, (SelectList)Model.ZoneID, "-- 請選擇地區 --", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">廠別：</label>
+                <div class="col-lg-8">
+                    @Html.DropDownListFor(x => x.SearchParaMeter.Factory, (SelectList)Model.Factory, "-- 請選擇廠別 --", new { @class = "form-control" })
+                    @*<select id="SearchParaMeter_Factory" name="county" class="form-control"></select>*@
+
+                </div>
+            </div>
+        </div>
+
+
+        <span class="clearfix"></span>
+
+        <div class="row">
+
+            <div class="twobtn col-md-offset-5">
+                <button type="submit" class="btn btn-primary"><i class="icon_search"></i>&nbsp;搜尋</button>
+                @*<input type="submit" class="btn btn-primary" value="搜尋">
+
+                <span></span>
+
+                <input id="btnreset" type="reset" class="btn btn-default" value="取消">*@
+
+            </div>
+
+        </div>
+
+    }
+
+</div>
+
+@Html.PagedListPager(Model.AttSearchList, page => Url.Action("Index", new { page }),
+    PagedListRenderOptions.ClassicPlusFirstAndLast)
+@if (Session["EmployeeID"].ToString() == "5")
+{
+@Html.ActionLink("新增廠別", "Create", new { }, new { @class = "btn btn-info fancybox fancybox.iframe" })}
+else {
+    @Html.ActionLink("新增廠別", "Create", new { }, new { @class = "btn btn-info fancybox fancybox.iframe", disabled = "disabled" })
+}
+<br/>
+<br/>
+<table class="table table-striped talbe-advance table-hover">
+
+    <tr>
+        <th>
+            <i class="icon_pin"></i>
+
+            @Html.DisplayNameFor(model => model.廠別s.FirstOrDefault().ZoneID)
+
+        </th>
+
+
+        <th><i class="icon_house"></i>
+
+            @Html.DisplayNameFor(model => model.廠別s.FirstOrDefault().FacName)
+        
+        </th>
+
+        <th>
+
+            @Html.DisplayNameFor(model => model.廠別s.FirstOrDefault().FacID)
+
+        </th>
+
+        <th>
+
+            @Html.DisplayNameFor(model => model.廠別s.FirstOrDefault().Supervisor)
+
+        </th>
+
+        <th>
+
+            @Html.DisplayNameFor(model => model.廠別s.FirstOrDefault().EditTime)
+
+        </th>
+
+        <th>
+
+        <i class="icon_pencil-edit"></i>&nbsp資料編輯
+
+        </th>
+    </tr>
+
+
+
+    @foreach (var item in Model.AttSearchList)
+
+    {
+
+        <tr>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Country)
+
+            </td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.FacName)
+
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.FacID)
+
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.EmpName)
+
+            </td>
+
+            <td>
+
+                @Html.DisplayFor(modelItem => item.EditTime)
+
+            </td>
+            <td>
+                @if (Session["EmployeeID"].ToString() == "5")
+                {
+                @Html.ActionLink("編輯", "Edit", new { id = item.FacNo }, new { @class = "btn btn-primary btn-md fancybox fancybox.iframe", data_target = "#myModal", data_toogle = "modal" })
+                    <span></span>
+                @Html.ActionLink("刪除", "Delete", new { id = item.FacNo }, new { @class = "btn btn-danger btn-md fancybox fancybox.iframe" })}
+                else {
+                    @Html.ActionLink("編輯", "Edit", new { id = item.FacNo }, new { @class = "btn btn-primary btn-md fancybox fancybox.iframe", data_target = "#myModal", data_toogle = "modal", disabled = "disabled" })
+                    <span></span>
+                     @Html.ActionLink("刪除", "Delete", new { id = item.FacNo }, new { @class = "btn btn-danger btn-md fancybox fancybox.iframe", disabled = "disabled" })}              
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        //$("#btnreset").click(function () {
+
+        //    $('#SearchParaMeter_Factory').empty().append($('<option></option>').val('').text('請選擇'));;
+        //})
+     $(function () {
+         $('.pagination>li>a[href]').each(function (i, item) {
+             var page = $(item).attr('href').replace('/Factory?page=', '');
+             $(item).attr('href', '#').click(function () { postPage(page); });
+
+         });
+     });
+
+     function postPage(page) {
+         var targetFormId = '#ProductList';
+         if ($(targetFormId).size() > 0) {
+             $('<input>')
+                 .attr({ type: 'hidden', id: 'PageIndex', name: 'PageIndex', value: page })
+                 .appendTo($(targetFormId));
+             $(targetFormId).submit();
+         }
+     };
+
+
+     $(document).ready(function () {
+         $('.fancybox').fancybox({
+             'afterClose': function () {
+                 window.location.reload();
+             }
+         });
+         //$('#SearchParaMeter_Factory').empty();
+         $("#SearchParaMeter_ZoneID").select2();
+         $("#SearchParaMeter_Factory").select2();
+         //ChangeCity();
+         
+         $('#SearchParaMeter_ZoneID').change(function () {
+             ChangeCity();
+         });
+     });
+
+     function ChangeCity() {
+         var selectedValue = $('#SearchParaMeter_ZoneID option:selected').val();
+         if ($.trim(selectedValue).length > 0) {
+             GetFactorys(selectedValue);
+
+         } else {
+             $('#SearchParaMeter_Factory').empty();
+             $('#SearchParaMeter_Factory').append($('<option></option>').val('').text('-- 請選擇廠別 --'));
+         }
+     }
+
+     function GetFactorys(CityID) {
+         $.ajax({
+             url: '@Url.Action("FactoryName", "Factory")',
+             data: { CityID: CityID },
+             type: 'post',
+             cache: false,
+             async: true,
+             dataType: 'json',
+             success: function (data) {
+                 if (data.length > 0) {
+                     $('#SearchParaMeter_Factory').empty();
+                     $('#SearchParaMeter_Factory').append($('<option></option>').val('').text('-- 請選擇廠別 --'));
+                     $.each(data, function (i, item) {
+                         $('#SearchParaMeter_Factory').append(
+                             $('<option></option>').val(item.Key).text(item.Value));
+                     });
+                 }
+                 
+             }
+         });
+     }
+    </script>
+
+}
+
+
+
+
+

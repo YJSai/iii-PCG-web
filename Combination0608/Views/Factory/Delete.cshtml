@@ -1,0 +1,51 @@
+﻿@model Combination0608.Models.Factories
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section style
+{
+    @*CSS*@
+}
+<h2>確認刪除資料</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            工廠代碼
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FacID)
+        </dd>
+        <dt>
+            工廠名稱
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FacName)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="刪除" class="btn btn-danger" />
+            <input type="button" id="btnExit" value="離開" class="btn btn-default" />
+        </div>
+    }
+</div>
+
+@section scripts
+{<script>
+    $(document).ready(function () {
+        window.onsubmit = function () {
+            parent.$.fancybox.close();
+        };
+        $('#btnExit').click(function () {
+            parent.$.fancybox.close();
+        });
+    });
+</script>}
+

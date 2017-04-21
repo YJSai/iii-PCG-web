@@ -1,0 +1,325 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<h2>出勤統計圖表</h2>
+<p id="debug"></p>
+<div class="well">
+
+    @using (Html.BeginForm("Index", "Factory", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ProductList" }))
+    {
+        <div class="row">
+
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">地區：</label>
+                <div class="col-lg-8">
+                    @Html.DropDownList("Country", (SelectList)ViewBag.SelectList, "請選擇地區", new { id = "Country", @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">廠別：</label>
+                <div class="col-lg-8">
+                    <select id="Factory" name="Factory" class="form-control"><option>------</option></select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">年份：</label>
+                <div class="col-lg-8">
+                    <select id="Mon1" name="Mon1" class="form-control"><option>------</option></select>
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                @*<label class="col-lg-3 control-label">結束月份：</label>
+                <div class="col-lg-8">
+                    <select id="Mon2" name="Mon2" class="form-control"><option>------</option></select>
+                </div>*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-5">
+                <button type="button" id="btnSearch" class="btn btn-primary"><i class="icon_search"></i>&nbsp查詢&繪圖</button>
+            </div>
+        </div>
+    }
+</div>
+
+
+        <span class="clearfix"></span>
+
+      
+
+    
+
+@*</div>*@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            @*<section id="nuke" style="width: 100%; margin: 10px; text-align:center;">*@
+                <div style="width: 100%;height: 500px ;text-align: center">
+                <div id="placeholder" style="width: 100%;height:100%">
+                </div>
+                </div>
+                <div style="font-size:1.4em;text-align: center" id="x-title"> </div>
+            @*</section>*@
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="~/scripts/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="~/scripts/jquery.flot.symbol.min.js"></script>
+    <script type="text/javascript" src="~/scripts/jquery.flot.time.min.js"></script>
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('#Country').select2();
+        $('#Factory').select2();
+        $('#Mon1').select2();
+        $('#Mon2').select2();
+        //----------2：第一個下拉選單選擇後會牽動第二個下拉選單------------
+        $('#Country').change(function () {
+            $('#Mon1').empty();
+            $('#Mon1').append($('<option></option>').val('').text('------'));
+            $('#Mon2').empty();
+            $('#Mon2').append($('<option></option>').val('').text('------'));
+            $("#tabletable").empty();
+            var selectedValue = $('#Country option:selected').val();
+            if ($.trim(selectedValue).length > 0) {
+                $.ajax({
+                    url: '@Url.Action("Facs", "AttE")',
+                    data: { ZoneID: selectedValue },
+                    type: 'post',
+                    cache: false,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.length > 0) {
+                            $('#Factory').empty();
+                            $('#Factory').append($('<option></option>').val('').text('請選擇廠別'));
+                            $.each(data, function (i, item) {
+                                $('#Factory').append($('<option></option>').val(item.Key).text(item.Value));
+                            });
+                        }
+                    }
+                });
+            }
+        });
+        //------3：第二個下拉選單選擇後會牽動第三個下拉選單------//
+        $('#Factory').change(function () {
+            $("#tabletable").empty();
+            $('#Mon2').empty();
+            $('#Mon2').append($('<option></option>').val('').text('------'));
+            var selectedValue = $('#Factory option:selected').val();
+            if ($.trim(selectedValue).length > 0) {
+                $.ajax({
+                    url: '@Url.Action("year", "Chart")',
+                    data: { FacID: selectedValue },
+                    type: 'post',
+                    cache: false,
+                    async: true,
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#Mon1').empty();
+                        $('#Mon1').append($('<option></option>').val('').text('請選擇年份'));
+                        $.each(data, function (i, item) {
+                            $('#Mon1').append($('<option></option>').val(item.Key).text(item.Value));
+                        });
+                    }
+                });
+            }
+        });
+        //------4：第三個下拉選單選擇後會牽動第四個下拉選單------//
+       })
+   
+    var options = {
+        legend: {
+            show: true,
+            margin: 10,
+            backgroundOpacity: 0.9
+        },
+        //points: {
+        //    show: true,
+        //    radius: 3
+        //},
+        //lines: {
+        //    show: false
+        //},
+        grid: { hoverable: true, clickable: true },
+        yaxis: { min: 0, tickFormatter: formatter },
+        xaxis: { ticks: [[1, "Jan"], [2, "Feb"], [3, "Mar"], [4, "Apr"], [5, "May"], [6, "Jun"], [7, "Jul"], [8, "Aug"], [9, "Sep"], [10, "Oct"], [11, "Nov"], [12, "Dec"]] }
+
+    };
+
+    function formatter(val, axis) {
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+
+
+
+    ///
+    $('#btnSearch').click(function () {
+        //$("#nuke").empty();
+        $("#x-title").empty();
+        $("#placeholder").empty();
+       
+        var sv1 = $('#Factory option:selected').val();
+        var sv2 = $('#Mon1 option:selected').val();
+
+
+        $.ajax({
+            url: '@Url.Action("ReturnData", "Chart")',
+            data: { Year: sv2, FID: sv1 },
+            type: 'post',
+            cache: false,
+            async: true,
+            dataType: 'json',
+            success: function (data) {
+                if (data.length > 0 && data[0].length>0) {
+                    var dataset = [
+  {
+      label: "月底人數",
+      data: data[1],
+      color: "#f4b400",
+      bars: {
+          show: true,
+          align: "center",
+          //barWidth: 24 * 60 * 60 * 600,
+          lineWidth: 1
+      }
+  }, {
+      label: "當月新進人數",
+      data: data[0],
+      //yaxis: 2,
+      color: "#0062FF",
+      lines: { show: true },
+      points: { symbol: "triangle", show: true }
+
+  }, {
+      label: "當月離職人數",
+      data: data[2],
+      //yaxis: 3,
+      color: "#FF0000",
+      points: { symbol: "circle", show: true },
+      lines: { show: true }
+  }
+                    ];
+
+                    //JSON.stringify
+                    //$("#debug").text(JSON.stringify(data[0]));
+                    $.plot($("#placeholder"), dataset, options);
+                    $("#placeholder").UseTooltip();
+                    $("#x-title").text("人數總覽" + sv2);
+                }
+            }
+        });
+    })
+    /////
+    var previousPoint = null, previousLabel = null;
+
+    $.fn.UseTooltip = function () {
+        $(this).bind("plothover", function (event, pos, item) {
+            if (item) {
+                if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                    previousPoint = item.dataIndex;
+                    previousLabel = item.series.label;
+                    $("#tooltip").remove();
+
+                    var x = item.datapoint[0];
+                    var y = item.datapoint[1];
+
+                    var color = item.series.color;
+                    //var date = "Jan " + new Date(x).getDate();
+
+                    var unit = "人";
+
+                    //if (item.series.label == "Sea Level Pressure") {
+                    //    unit = "hPa";
+                    //} else if (item.series.label == "Wind Speed") {
+                    //    unit = "km/hr";
+                    //} else if (item.series.label == "Temperature") {
+                    //    unit = "°C";
+                    //}
+
+                    showTooltip(item.pageX, item.pageY, color,
+                                "<strong>" + item.series.label + "</strong><br>"  +"<strong>"+x +'月'+"</strong>"+
+                                " : <strong>" + y + "</strong> " + unit + "");
+                }
+            } else {
+                $("#tooltip").remove();
+                previousPoint = null;
+            }
+        });
+    };
+
+
+    function showTooltip(x, y, color, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css({
+            position: 'absolute',
+            display: 'none',
+            top: y - 40,
+            left: x - 120,
+            border: '2px solid ' + color,
+            padding: '3px',
+            'font-size': '9px',
+            'border-radius': '5px',
+            'background-color': '#fff',
+            'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+            opacity: 0.9
+        }).appendTo("body").fadeIn(200);
+    }
+        /////
+ @*$.ajax({
+             url: '@Url.Action("ReturnData", "Chart")',
+     data: { data: 123 } ,
+            type: 'post',
+            cache: false,
+            async: true,
+            dataType: 'json',
+            success: function (data) {
+                alert("hello");
+                if (data.length > 0) {
+                    //123
+                    var dataset = [
+    {
+        label: "月底人數",
+        data: data[0],
+        color: "#756600",
+        bars: {
+            show: true,
+            align: "center",
+            //barWidth: 24 * 60 * 60 * 600,
+            lineWidth: 1
+        }
+    }, {
+        label: "當月新進人數",
+        data: data[1],
+        //yaxis: 2,
+        color: "#0062FF",
+        lines: { show: true },
+        points: { symbol: "triangle", show: true }
+       
+    }, {
+        label: "當月離職人數",
+        data: data[2],
+       //yaxis: 3,
+        color: "#FF0000",
+        points: { symbol: "circle", show: true },
+        lines: { show: true }
+    }
+                    ];
+
+                    //JSON.stringify
+                    //$("#debug").text(JSON.stringify(data[0]));
+                $.plot($("#placeholder"), dataset, options);
+            }
+
+            }
+ });*@
+</script>
+    }

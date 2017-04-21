@@ -1,0 +1,43 @@
+﻿@model Combination0608.Models.Announcement
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section style
+{
+    @*CSS*@
+}
+<div>
+    <h4>@Html.DisplayFor(model => model.ancTitle)</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            發布者
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.publisher)
+        </dd>
+        <dt>
+            發布日期
+        </dt>
+        <dd>
+            @String.Format("{0:yyyy-MM-dd}", Model.ancDate)
+        </dd>
+        <dt>
+            公告內容
+        </dt>
+        <dd>
+            @Html.Raw(Html.Encode(Model.ancContent).Replace("\r\n", "<br />"))
+        </dd>
+
+    </dl>
+</div>
+<button class="btn btn-primary" id="btnClose">關閉</button>
+@section scripts
+{
+    <script>
+        $('#btnClose').click(function () {
+            parent.$.fancybox.close();
+        });
+    </script>
+}

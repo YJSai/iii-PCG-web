@@ -1,0 +1,112 @@
+﻿<script src="~/scripts/jquery-1.10.2.js"></script>
+@model  IEnumerable<Combination0608.Controllers.LoginController.character>
+
+@{
+    ViewBag.Title = "test";
+    string ReturnUrl = Request.QueryString["ReturnUrl"] != null ? Request.QueryString["ReturnUrl"].ToString() : @"/Login/Login";
+    Session["ReturnUrl"] = ReturnUrl;
+
+}
+@section style{
+}
+
+<style>
+    #accenter {
+        margin-top: 5em;
+    }
+    #admin {
+        font-size: 1.2em;
+    }
+</style>
+<div><h2>歡迎 <a>@User.Identity.Name</a>來到後台管理系統</h2></div>
+
+@if (User.Identity.IsAuthenticated)
+{
+
+    <p hidden id="debug">@Session["userdata"].ToString()</p>
+}
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+
+            <div style="text-align: center"><h2 id="admin">登入</h2></div>
+
+            @*<div class="form-group">*@
+
+
+
+            @*<h3 class="panel-title">Panel title</h3>*@
+        </div>
+        <div class="panel-body">
+            @*Panel content*@
+
+            <form method="post" class="form-horizontal" role="form">
+
+                @{
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        <button class="btn btn-default col-md-2" type="submit" id="Buttonout">登出</button>
+
+                    }
+                    else {
+                        @*<div class="col-sm-offset-5 form-group">
+                                <input type="text" class="form-control col-sm-3" name="Account" id="Account" />
+                                <br />
+                                <span></span>
+                                <input type="password" class="form-control col-sm-3" id="Password" name="Password" />
+                                <br />
+                                <span></span>
+                                <button class="btn btn-primary" type="submit" id="ButtonSubmit">登入</button>
+                            </div>*@
+                        <div class="col-sm-offset-4" id="accenter">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">帳號：</label>
+                                <div class="col-sm-3">
+                                    <input type="text" class="form-control" name="Account" id="Account" placeholder="請輸入帳號" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">密碼：</label>
+                                <div class="col-sm-3">
+                                    <input type="password" class="form-control" id="Password" name="Password" />
+                                </div>
+                            </div>
+                            <button class="btn btn-primary col-sm-offset-2" type="submit" id="ButtonSubmit">登入</button>
+                        </div>
+                    }
+                }
+
+            </form>
+        </div>
+    </div>
+
+    @*登入後頁面在webconfig有設定一個，如果要自己action設定就把它砍掉*@
+                    @*<div class="text-center text-success">連結需要登入才可以進入</div>*@
+                    <a style="color:red;">@ViewData["error"]</a>
+                    @*@Session["ReturnUrl"]*@
+                    @*@ViewData["userdata"]*@
+                    @*@Session["EmployeeID"]*@
+                    @* 抓取EmployeeID *@
+                    @*</div>*@
+                    }
+
+                    @* 抓取帳號名稱 *@
+                    <script>
+                        $("#admin").click(function () {
+                            //alert("ok");
+                            $("#Account").val("superuser");
+                            $("#Password").val("12345678");
+                        })
+
+                        $("#Buttonout").click(function () {
+                            $.ajax({
+                                type: "post",
+                                url: "../Login/Logout",
+                            }).done(function () {
+                                $("#debug").text("out");
+
+                            });
+                        })
+                    </script>

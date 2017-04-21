@@ -1,0 +1,157 @@
+﻿@using Combination0608.Models;
+@model  IEnumerable<Combination0608.Controllers.PMCController.PersonInformation>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+@{
+    ViewBag.Title = "Edit";
+}
+@{var EmployeeID = 0;
+    //var ZoneID = 0;
+    }
+<h2>編輯人員權限</h2>
+@using (Html.BeginForm("EditPermissionsubmit", "PMC", FormMethod.Post))
+{
+    foreach (var item in Model)
+    {
+        EmployeeID =item.EmployeeID;
+        <div class="col-md-2">
+            
+            <label>員工編號:@item.EmployeeID</label><input style="display:none" class="form-control col-md-2" id="EmployeeID" type="text" hidden="hidden" name="EmployeeID" value="@item.EmployeeID" /><br />
+            <label>工廠ID:</label><input class="form-control col-md-2" type="text" name="FacID" value="@item.FacID" placeholder="工廠ID" /><br />
+            <label>員工名稱:</label><input class="form-control col-md-2" type="text" name="Name" value="@item.Name" placeholder="員工名稱"/><br />
+            <label>職稱:</label><input class="form-control col-md-2" type="text" name="Character" value="@item.Character" placeholder="職稱"/><br />
+            <label>電子信箱:</label><input class="form-control col-md-2" type="text" name="Email" value="@item.Email" placeholder="Email"/><br />
+            <label>帳號:</label><input class="form-control col-md-2" type="text" name="Account" value="@item.Account" placeholder="帳號"/><br />
+            <label>密碼:</label><input class="form-control col-md-2" type="text" name="Password" value="@item.Password" placeholder="密碼"/><br />
+
+
+            </div>
+            <table id="Table">
+                <tr>
+                    <td></td>
+                    <td> </td>
+                </tr>
+                <tr>
+                    <td>
+                        @* 可選之下拉選單 *@
+                        可選權限<br />
+                        <select id="NonHaveSelect" class="form-control" style="width:300px;" size="30" name="NonHaveSelect" multiple></select>
+
+                        @* 可選之下拉選單 *@
+
+                    </td>
+                    <td>
+                        <input type="button" class="btn btn-primary" readonly id="add" value="增加" /><br />
+                        <input type="button" class="btn btn-danger" readonly id="des" value="去除" />
+                    </td>
+                    <td>
+                        @*已經有權限之下拉清單 *@
+                        已經有的權限<br />
+                        <select id="HaveSelect"  name="HaveSelect" class="form-control"  style="width:300px;" multiple size="30" max-width="500px"></select>
+
+                        @*已經有權限之下拉清單 *@
+                    </td>
+                </tr>
+            </table>
+
+            }
+            <button id="submit" class="btn btn-primary">修改完成</button>
+            }
+
+
+
+            @*<button type="submit" id="cancel">取消</button>*@
+            <script src="~/Scripts/jquery-1.10.2.js"></script>
+
+            <script>
+
+
+                $('#NonHaveSelect').click(function(){
+
+                    $('#HaveSelect option').prop('selected', true);
+                });
+
+                $.ajax({
+                    method:"post",
+                    url: "../PMC/EditHavepermission",
+                    dataType: "json",
+                    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                    data:{EmployeeID:@EmployeeID}
+                }).success(function (data) {
+                    //alert(JSON.stringify(data));
+                    $.each(data,function(key,val){
+                        var str='<option value="'+val.FacNo+'">'+val.FacName+'</option>';
+                        $("#HaveSelect").append(str);
+                    });
+                    $('#HaveSelect option').prop('selected', true);
+                });
+
+                $.ajax({
+                    method:"post",
+                    url: "../PMC/EditNonHavepermission",
+                    dataType: "json",
+                    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                    data:{EmployeeID:@EmployeeID}
+                    //{欄位名稱:欄位值}
+
+                }).success(function (data) {
+                    //alert(JSON.stringify(data));
+                    $.each(data,function(key,val){
+                        var str='<option value="'+val.FacNo+'">'+val.FacName+'</option>';
+                        $("#NonHaveSelect").append(str);
+                    });
+                });
+
+                $("#add").click(function () {
+                    //alert("ok");
+                    $('#NonHaveSelect option:selected').each(function (i,values) {
+                        //alert(values);
+                        $('#HaveSelect').append(values);
+
+                        var str = '<option value="' + values.text + '">' + values.text + '</option>';
+                        $('#HaveSelect').append(str);//右上
+                        var HaveSelectarr = {};
+                        $("select[name='HaveSelect'] > option").each(function () {
+                            if (HaveSelectarr[this.text]) {
+                                $(this).remove();
+                            } else {
+                                HaveSelectarr[this.text] = this.value;
+                            }
+                        });
+                    });
+                    $('#HaveSelect option').prop('selected', true);
+
+
+                });
+                //右上到左上 左下
+                $("#des").click(function () {
+                    $('#HaveSelect option:selected').each(function (i, values) {
+                        $('#NonHaveSelect').append(values);
+                        $('#test').find('option[text="B"]').val();
+                        var str = '<option value="' + values.text + '">' + values.text + '</option>';
+                        $('#NonHaveSelect').append(str);//左上
+                        var NonHaveSelectarr = {};//左上重複比對
+                        $("select[name='NonHaveSelect'] > option").each(function () {
+                            if (NonHaveSelectarr[this.text]) {
+                                $(this).remove();
+                            } else {
+                                NonHaveSelectarr[this.text] = this.value;
+                            }
+                        });
+                    });
+                    $('#HaveSelect option').prop('selected', true);
+                });//des click
+
+                //提交----------------------------------
+                //$("#submit").click(function(){
+
+                //    $.ajax({
+                //            type: "post",
+                //            url: "../PMC/EditPermissionsubmit",
+                //            data:$('select#HaveSelect').serialize()
+                //        }).success(function (data) {
+                //            $("#debug").text(JSON.stringify(data));
+                //        });
+
+                //});
+
+            </script>

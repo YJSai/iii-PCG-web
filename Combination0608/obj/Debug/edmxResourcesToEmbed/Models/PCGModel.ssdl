@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="PCGModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Administrators">
+    <Key>
+      <PropertyRef Name="EmployeeID" />
+    </Key>
+    <Property Name="EmployeeID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FacID" Type="nvarchar" MaxLength="10" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Character" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Account" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="Password" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="Role" Type="nchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="Announcement">
+    <Key>
+      <PropertyRef Name="ancID" />
+    </Key>
+    <Property Name="ancID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="publisher" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="ancDate" Type="date" Nullable="false" />
+    <Property Name="ancTitle" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="ancContent" Type="nvarchar" MaxLength="1000" Nullable="false" />
+  </EntityType>
+  <EntityType Name="FacPopulation">
+    <Key>
+      <PropertyRef Name="PopID" />
+    </Key>
+    <Property Name="PopID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Date" Type="nvarchar" MaxLength="7" Nullable="false" />
+    <Property Name="FacID" Type="nvarchar" MaxLength="10" Nullable="false" />
+    <Property Name="PopTotal" Type="int" Nullable="false" />
+    <Property Name="PopNew" Type="int" Nullable="false" />
+    <Property Name="PopLeft" Type="int" Nullable="false" />
+    <Property Name="PopLeft3" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Factories">
+    <Key>
+      <PropertyRef Name="FacNo" />
+    </Key>
+    <Property Name="FacNo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FacID" Type="nvarchar" MaxLength="10" Nullable="false" />
+    <Property Name="FacName" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="ZoneID" Type="int" />
+    <Property Name="EditTime" Type="smalldatetime" />
+    <Property Name="Supervisor" Type="int" />
+  </EntityType>
+  <EntityType Name="MaintenanceChart">
+    <Key>
+      <PropertyRef Name="MCID" />
+    </Key>
+    <Property Name="MCID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EmployeeID" Type="int" />
+    <Property Name="Year" Type="int" />
+    <Property Name="Month" Type="int" />
+    <Property Name="IFMaintenance" Type="int" />
+  </EntityType>
+  <EntityType Name="Permission">
+    <Key>
+      <PropertyRef Name="PermissionID" />
+    </Key>
+    <Property Name="PermissionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EmployeeID" Type="int" Nullable="false" />
+    <Property Name="ZoneID" Type="int" Nullable="false" />
+    <Property Name="FacNo" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Zone">
+    <Key>
+      <PropertyRef Name="ZoneID" />
+    </Key>
+    <Property Name="ZoneID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Country" Type="nvarchar" MaxLength="50" Nullable="false" />
+  </EntityType>
+  <Association Name="FK__Factories__Super__3B75D760">
+    <End Role="Administrators" Type="Self.Administrators" Multiplicity="0..1" />
+    <End Role="Factories" Type="Self.Factories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Administrators">
+        <PropertyRef Name="EmployeeID" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="Supervisor" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Factories__ZoneI__3C69FB99">
+    <End Role="Zone" Type="Self.Zone" Multiplicity="0..1" />
+    <End Role="Factories" Type="Self.Factories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Zone">
+        <PropertyRef Name="ZoneID" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="ZoneID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Factories__ZoneI__3D5E1FD2">
+    <End Role="Zone" Type="Self.Zone" Multiplicity="0..1" />
+    <End Role="Factories" Type="Self.Factories" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Zone">
+        <PropertyRef Name="ZoneID" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="ZoneID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="PCGModelStoreContainer">
+    <EntitySet Name="Administrators" EntityType="Self.Administrators" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Announcement" EntityType="Self.Announcement" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="FacPopulation" EntityType="Self.FacPopulation" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Factories" EntityType="Self.Factories" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="MaintenanceChart" EntityType="Self.MaintenanceChart" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Permission" EntityType="Self.Permission" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Zone" EntityType="Self.Zone" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__Factories__Super__3B75D760" Association="Self.FK__Factories__Super__3B75D760">
+      <End Role="Administrators" EntitySet="Administrators" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Factories__ZoneI__3C69FB99" Association="Self.FK__Factories__ZoneI__3C69FB99">
+      <End Role="Zone" EntitySet="Zone" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Factories__ZoneI__3D5E1FD2" Association="Self.FK__Factories__ZoneI__3D5E1FD2">
+      <End Role="Zone" EntitySet="Zone" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,104 @@
+﻿@model Combination0608.Models.FacPopulation
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section style
+{
+    @*CSS*@
+<style>
+    .field-validation-valid {
+        display: none;
+    }
+</style>
+}
+<h2>新增人員資料</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Date, "年月", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Date, new { @id = "txtDate", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Date, "日期為必要欄位!", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FacID, "廠別", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("Factory", null, "-- 請選擇廠別--", htmlAttributes: new { @id = "dpFac", @class = "form-control" })
+                @Html.TextBoxFor(model => model.FacID, new { @id = "txtFacID", @class = "form-control hide" })
+                @Html.ValidationMessageFor(model => model.FacID, "廠別為必要欄位!", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PopTotal, "月底總人數", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.PopTotal, new { @id = "txtPopTotal", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PopTotal, "總人數為必要欄位!", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PopNew, "當月新進人數", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.PopNew, new { @id = "txtPopNew", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PopNew, "新進人數為必要欄位!", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PopLeft, "當月離職人數(正式員工)", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.PopLeft, new { @id = "txtPopLeft", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PopLeft, "正職員工離職人數為必要欄位!", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PopLeft3, "當月離職人數(試用期)", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.PopLeft3, new { @id = "txtPopLeft3", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PopLeft3, "試用期離職人數為必要欄位!", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="新增" class="btn btn-primary" /> |@Html.ActionLink("回上一頁", "Index", new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts
+{
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            //$('#dpFac').select2();
+            $(':header').click(function () {
+                $('#txtDate').val("2016-07");
+                $('#dpFac').val("TPEGG01");
+                $('#txtPopTotal').val("999");
+                $('#txtPopNew').val("999");
+                $('#txtPopLeft').val("0");
+                $('#txtPopLeft3').val("0");
+            });
+            window.onsubmit = function () {
+                $('#txtFacID').val($('#dpFac option:selected').val());
+                parent.$.fancybox.close();
+            };
+        });
+    </script>
+}
+

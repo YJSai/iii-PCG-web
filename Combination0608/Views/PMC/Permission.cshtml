@@ -1,0 +1,182 @@
+﻿@using Combination0608.Models;
+@model  IEnumerable<Combination0608.Controllers.PMCController.PersonInformation>
+@{
+    ViewBag.Title = "Permission";
+}
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+<h2>Permission</h2>
+<div class="well">
+    @* 外框 *@
+    <div class="form-horizontal" role="form" id="ProductList">
+        @* 第二行開始 *@
+        @* 第一欄開始 *@
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">姓名：</label>
+                <div class="col-lg-8">
+                    
+                    <select id="txtName" class="form-control text-box single-line">
+                        <option value="">--請選擇--</option>
+                        @foreach (var item in Model)
+                        {
+                            <option value="@item.EmployeeID">@item.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            @* 第一欄結束 *@
+            @* 第二欄開始 *@
+            <div class="row">
+            </div>
+            @* 第二欄結束 *@
+
+        </div> @* 第二行結束 *@
+        <span class="clearfix"></span>
+        <span class="clearfix"></span>
+        @* 第三行開始 *@
+        <div class="row">
+          
+
+            <div class="col-md-offset-5">
+
+                <input type="submit" class="btn btn-primary" value="Search">
+                <span></span>
+                <input id="btnreset" type="reset" class="btn btn-default" value="Cancel">
+            </div>
+        </div>
+        @* 第三行結束 *@
+    </div>
+</div>
+<label id="A"></label>
+<p id="debug"></p>
+
+
+<table id="Table" style="border-bottom-style:double; border-width:thick;border-color:red;">
+    <tr>
+        <td>
+            搜尋：<input id="search" type="text" />
+            
+        </td>
+        <td> </td>
+    </tr>
+    <tr>
+        <td >
+            @* 可選之下拉選單 *@
+            可選權限<br />
+            <select id="NonHaveSelect" style="width:300px;" size="30" name="NonHaveSelect"  multiple>
+                <option value="me">test1</option>
+            </select>
+            
+            @* 可選之下拉選單 *@
+
+        </td>
+        <td>
+            <button id="add">增加</button><br />
+            <button id="des">去除</button>
+        </td>
+        <td>
+            @*已經有權限之下拉清單 *@
+            已經有的權限<br />
+            <select id="HaveSelect" name="HaveSelect" style="width:300px;" multiple size="30" max-width="500px">
+                
+            </select>
+
+            @*已經有權限之下拉清單 *@
+        </td>
+    </tr>
+</table>
+<button id="SubmitSQL">確定</button><br /><button>取消</button>
+@*<a id="debug">sadasd</a>
+<a id="debug2">sadasd</a>*@
+<script>
+    $(document).ready(function () {
+        $("#txtName").select2();
+       
+        //右上到左下左上
+        $("#add").click(function () {
+            //alert("ok");
+            $('#NonHaveSelect option:selected').each(function (i, values) {
+                //alert(values);
+                $('#HaveSelect').append(values);
+
+                var str = '<option value="' + values.text + '">' + values.text + '</option>';
+                $('#HaveSelect').append(str);//右上
+                var HaveSelectarr = {};
+                $("select[name='HaveSelect'] > option").each(function () {
+                    if (HaveSelectarr[this.text]) {
+                        $(this).remove();
+                    } else {
+                        HaveSelectarr[this.text] = this.value;
+                    }
+                });
+            });
+       
+        });
+        //右上到左上 左下
+        $("#des").click(function () {
+            $('#HaveSelect option:selected').each(function (i, values) {
+                $('#NonHaveSelect').append(values);
+                $('#test').find('option[text="B"]').val();
+                var str = '<option value="' + values.text + '">' + values.text + '</option>';
+                $('#NonHaveSelect').append(str);//左上
+                var NonHaveSelectarr = {};//左上重複比對
+                $("select[name='NonHaveSelect'] > option").each(function () {
+                    if (NonHaveSelectarr[this.text]) {
+                        $(this).remove();
+                    } else {
+                        NonHaveSelectarr[this.text] = this.value;
+                    }
+                });
+            });
+        });//des click
+        $("#txtName").change(function () {
+            $("#HaveSelect").empty();
+            $("#NonHaveSelect").empty();
+            $.ajax({
+                type: "POST",
+                url: "../PMC/Permission",
+                data: { name: $("#txtName").val() },
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                success: function (data) {
+
+                    $("#debug").text(JSON.stringify(data));
+                    $.each(data.model, function (key, val) {
+                        var strselectd = '<option value="' + val.FacNo + '">' + val.FacName + '</option>';
+                        $("#HaveSelect").append(strselectd);
+                    })
+                }
+            });
+            //----------------------------------------------------------
+            $.ajax({
+                type: "POST",
+                url: "../PMC/Permission2",
+                data: { name: $("#txtName").val(), EmployeeID: $("#txtName").val() },
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                success: function (data) {
+
+                    $("#debug2").text(JSON.stringify(data));
+                    $.each(data.model, function (key, val) {
+                        var strselectd = '<option value="' + val.FacNo + '">' + val.FacName + '</option>';
+                        $("#NonHaveSelect").append(strselectd);
+                    });
+
+                
+                }//success
+            });//ajax
+
+
+        });
+
+    });//DOC READY
+    //------------姓名選擇時改變下拉式選單
+    //--------------點選確定時修改權限
+
+    $("#SubmitSQL").click(function () {
+
+        alert("ok");
+    });
+
+</script>

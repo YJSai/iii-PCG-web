@@ -1,0 +1,27 @@
+﻿@model Combination0608.Models.FacPopulation
+
+<tr id="tabletitle">
+    <th><i class="icon_house"></i>&nbsp廠別</th>
+    <th><i class="icon_calendar"></i>&nbsp年月</th>
+    <th><i class="icon_group"></i>&nbsp月底人數</th>
+    <th><i class="icon_plus_alt2"></i>&nbsp當月新進人數</th>
+    <th><i class="icon_minus_alt2"></i>&nbsp當月離職人數</th>
+    <th><i class="icon_minus_alt2"></i>&nbsp當月三個月內離職人數</th>
+    <th><i class="icon_pencil-edit"></i>&nbsp資料編輯</th>
+</tr>
+<tr id="tabletable">
+    <td id="tableFacName"></td>
+    <td>@Model.Date</td>
+    <td>@Model.PopTotal</td>
+    <td>@Model.PopNew</td>
+    <td>@Model.PopLeft</td>
+    <td id="tableLeft3">&nbsp</td>
+    <td>
+        <div class="btn-group">
+            <button type="button" id="btnEdit" class="btn btn-info"><i class="icon_pencil-edit"></i>&nbsp編輯</button>
+            <button type="button" id="btnRemove" class="btn btn-warning"><i class="icon_close"></i>&nbsp刪除</button>
+        </div>
+    </td>
+</tr>
+
+

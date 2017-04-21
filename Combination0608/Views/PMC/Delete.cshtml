@@ -1,0 +1,19 @@
+﻿@using Combination0608.Models;
+@model Combination0608.Models.Administrators
+@{
+    ViewBag.Title = "Edit";
+}
+@section style{<link href="~/Content/PagedList.css" rel="stylesheet" />}
+<h2>刪除資料</h2>
+
+@using (Html.BeginForm("Delete", "PMC", FormMethod.Post))
+{
+    <label>EmployeeID:</label><input type="text" name="EmployeeID" value="@Model.EmployeeID" /><br />
+    <label>FacID:</label><input type="text" name="FacID" value="@Model.FacID" /><br />
+        <label>Name:</label><input type="text" name="Name" value="@Model.Name" /><br />
+        <label>Character:</label><input type="text" name="Character" value="@Model.Character" /><br />
+        <label>Email:</label><input type="text" name="Email" value="@Model.Email" /><br />
+        <label>Account:</label><input type="text" name="Account" value="@Model.Account" /><br />
+        <label>Password:</label><input type="text" name="Password" value="@Model.Password" /><br />
+        <button>確認刪除</button>
+}

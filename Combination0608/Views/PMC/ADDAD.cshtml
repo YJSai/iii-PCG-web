@@ -1,0 +1,153 @@
+﻿@using Combination0608.Models;
+@model  IEnumerable<Combination0608.Controllers.PMCController.PersonInformation>
+@{
+    ViewBag.Title = "ADDAD";
+}
+<h2 id="addpeople">新增人員</h2>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<a id="various3"></a>
+@using (Html.BeginForm("ADDAD", "PMC", FormMethod.Post))
+{
+    <div class="col-md-2">
+        <label hidden="hidden">EmployeeID:</label><input hidden="hidden" disabled="disabled" type="text" name="EmployeeID" /><br />
+        <label>工廠名稱:</label>
+
+        <select id="addselect" class="form-control col-md-2" type="text" name="FacID">
+            @foreach (var item in Model)
+            {
+                <option value="@item.FacID">@item.FacName</option>
+            }
+        </select><br />
+        <label>名字:</label><input id="Name" class="form-control col-md-2" type="text" name="Name" value="@TempData["Name"]" placeholder="名字" />@TempData["Nameerror"]       <br />
+        <label>職稱:</label><input id="Character" class="form-control col-md-2" type="text" name="Character" value="@TempData["Character"]" placeholder="職稱" />@TempData["Charactererror"] <br />
+
+        <label>電子信箱:</label><input id="Email" class="form-control col-md-2"  type="text" name="Email" value="@TempData["Email"]" placeholder="電子信箱"/>@TempData["Emailerror"] <br />
+
+        <label>帳號:</label><input id="Account" class="form-control col-md-2" type="text" name="Account" value="@TempData["Account"]" placeholder="帳號"/>@TempData["Accounterror"] <br />
+
+        <label>密碼:</label><input id="Password" class="form-control col-md-2" type="password" name="Password" value="@TempData["Password"]" placeholder="密碼"/>@TempData["Passworderror"] <br />
+
+        <button id="submit" class="btn btn-primary" style="margin-top:20px;" type="submit">新增人員</button>
+
+        <button id="cancel"  class="btn btn-danger" style="margin-top:20px;" type="button">取消</button>
+        </div>
+
+
+        <table id="Table">
+            @*<tr>
+
+                <td></td>
+                <td></td>
+
+            </tr>*@
+
+            <tr>
+                <td>@* 可選之下拉選單 *@可選權限<br />
+                    <select id="NonHaveSelect" style="width:300px;color:black !important;" class="form-control" size="10" name="NonHaveSelect" multiple>
+                        @foreach (var item in Model)
+                {
+                            <option name="chk" value="@item.FacNo">@item.Country _@item.FacName</option>
+                        }
+                    </select>
+                    @* 可選之下拉選單 *@
+                </td>
+                <td>
+                    <input readonly type="button" class="btn btn-primary" value="增加" id="add"><br />
+                    <input readonly type="button" style="margin-top:20px;" class="btn btn-danger "  value="去除" id="des">
+                </td>
+                <td style="vertical-align:top !important;">@*已經有權限之下拉清單 *@已選權限<br />
+                    <select id="HaveSelect" name="HaveSelect" class="form-control" style="width:300px;color:black !important;"   multiple size="11"></select>
+                    @*已經有權限之下拉清單 *@
+                </td>
+            </tr>
+
+        </table>
+        }
+        @*<a id="=debug">debug</a>*@
+        <script>
+
+
+            $(document).ready(function () {
+                $("#addselect").select2();
+                $("#cancel").click(function () {
+
+
+                });
+                $("#addpeople").click(function () {//新增人員密技
+                    $("#Name").val("蔡雲傑");
+                    $("#Character").val("巨蛋廠特助");
+                    $("#Email").val("taipeibigegg@gmail.com");
+                    $("#Account").val("q020385791");
+                    $("#Password").val("q27037124");
+                });
+
+
+                $('#NonHaveSelect').click(function () {
+
+                    $('#HaveSelect option').prop('selected', true);
+                });
+
+
+                $("#submit").click(function () {
+                    //alert("新增人員完成");
+                    $.ajax({
+                        type: "post",
+                        url: "../PMC/Permissionsubmit",
+                        data: $('select#HaveSelect').serialize()
+                    }).success(function (data) {
+                        $("#debug").text(JSON.stringify(data));
+                        alert("新增人員完成");
+                    });
+                });
+
+                //右上到左下左上
+                $("#add").click(function () {
+                    //alert("ok");
+                    $('#NonHaveSelect option:selected').each(function (i, values) {
+                        //alert(values);
+                        $('#HaveSelect').append(values);
+
+                        var str = '<option value="' + values.text + '">' + values.text + '</option>';
+                        $('#HaveSelect').append(str);//右上
+                        var HaveSelectarr = {};
+                        $("select[name='HaveSelect'] > option").each(function () {
+                            if (HaveSelectarr[this.text]) {
+                                $(this).remove();
+                            } else {
+                                HaveSelectarr[this.text] = this.value;
+                            }
+                        });
+                    });
+                    $('#HaveSelect option').prop('selected', true);
+                });
+                //右上到左上 左下
+                $("#des").click(function () {
+                    $('#HaveSelect option:selected').each(function (i, values) {
+                        $('#NonHaveSelect').append(values);
+                        $('#test').find('option[text="B"]').val();
+                        var str = '<option value="' + values.text + '">' + values.text + '</option>';
+                        $('#NonHaveSelect').append(str);//左上
+                        var NonHaveSelectarr = {};//左上重複比對
+                        $("select[name='NonHaveSelect'] > option").each(function () {
+                            if (NonHaveSelectarr[this.text]) {
+                                $(this).remove();
+                            } else {
+                                NonHaveSelectarr[this.text] = this.value;
+                            }
+                        });
+                    });
+
+                    
+                        $('#HaveSelect option').prop('selected', true);
+
+
+                });//des click
+            });//DOC READY
+            //--------------點選確定時修改權限
+
+            $("#SubmitSQL").click(function () {
+                //$('#HaveSelect option:selected').each(function (i, values)
+                alert("ok");
+            });
+
+        </script>

@@ -1,0 +1,190 @@
+﻿@using PagedList.Mvc
+@model Combination0608.ViewModels.AttMViewModel
+@{
+    ViewBag.Title = "Index";
+}
+@section style
+{
+    @*CSS*@
+    <style>
+        #btnSearch {
+            vertical-align: central;
+        }
+    </style>
+
+}
+<h2>出勤人數管理</h2>
+@*<p id="debug">@Session["userdata"].ToString()</p>*@
+<div class="well">
+    @using (Html.BeginForm("Index", "AttM", FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "ProductList" }))
+    {
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">地區：</label>
+                <div class="col-lg-8">
+                    @Html.DropDownListFor(x => x.SearchParaMeter.ZoneID, (SelectList)Model.ZoneID, "-- 請選擇地區 --", new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">廠別：</label>
+                <div class="col-lg-8">
+                    @Html.DropDownListFor(x => x.SearchParaMeter.FacID, (SelectList)Model.Factory, "-- 請選擇廠別 --", new { @class = "form-control" })
+                </div>
+            </div><br />
+            <div class="col-md-6 form-group">
+                <label class="col-lg-3 control-label">日期：</label>
+                <div class="col-lg-8">
+                    @Html.DropDownListFor(x => x.SearchParaMeter.Date, (SelectList)Model.Date, "-- 請選擇日期 --", new { @class = "form-control" })
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-offset-5">
+                @* 搜尋與取消按鈕 *@
+                <button type="submit" class="btn btn-primary"><i class="icon_search"></i>&nbsp;搜尋</button>
+            </div>
+        </div>
+    }
+</div>
+
+@Html.PagedListPager(Model.AttMSearchList, page => Url.Action("Index", new { page }),
+    PagedListRenderOptions.ClassicPlusFirstAndLast)
+@Html.ActionLink("新增資料", "Create", new { }, new { @class = "btn btn-info fancybox fancybox.iframe" })
+<br />
+<br />
+<table class="table table-striped talbe-advance table-hover">
+    <tr>
+        <th><i class="icon_house"></i>&nbsp;廠別</th>
+        <th><i class="icon_calendar"></i>&nbsp;年月</th>
+        <th><i class="icon_group"></i>&nbsp;月底總人數</th>
+        <th><i class="icon_plus-box"></i>&nbsp;新進人數</th>
+        <th><i class="icon_minus-box"></i>&nbsp;離職人數（正職員工）</th>
+        <th><i class="icon_minus-box"></i>&nbsp;離職人數（試用期）</th>
+        <th><i class="icon_pencil-edit"></i>&nbsp;資料編輯</th>
+    </tr>
+
+    @foreach (var item in Model.AttMSearchList)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FacName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PopTotal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PopNew)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PopLeft)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PopLeft3)
+            </td>
+            <td>
+                @Html.ActionLink("編輯", "Edit", new { id = item.PopID }, new { @class = "btn btn-primary btn-md fancybox fancybox.iframe" })
+                @Html.ActionLink("刪除", "Delete", new { id = item.PopID }, new {@class = "btn btn-danger btn-md fancybox fancybox.iframe" })
+            </td>
+        </tr>
+    }
+</table>
+
+@section scripts
+{
+    <script>
+        //分頁
+        $(function () {
+            $('.pagination>li>a[href]').each(function (i, item) {
+                var page = $(item).attr('href').replace('/AttM?page=', '');
+                $(item).attr('href', '#').click(function () { postPage(page); });
+
+            });
+        });
+
+        function postPage(page) {
+            var targetFormId = '#ProductList';
+            if ($(targetFormId).size() > 0) {
+                $('<input>')
+                    .attr({ type: 'hidden', id: 'PageIndex', name: 'PageIndex', value: page })
+                    .appendTo($(targetFormId));
+                $(targetFormId).submit();
+            }
+        };
+
+        $(document).ready(function () {
+            $('.fancybox').fancybox({
+                'afterClose': function () {
+                    window.location.reload();
+                }
+            });
+            $("#SearchParaMeter_ZoneID").select2();
+            $("#SearchParaMeter_FacID").select2();
+            $("#SearchParaMeter_Date").select2();
+            var session = @Request.RequestContext.HttpContext.Session["userdata"]
+            //第一段連動
+            $("#SearchParaMeter_ZoneID").change(function () {
+                var sv1 = $('#SearchParaMeter_ZoneID option:selected').val();
+                if ($.trim(sv1).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("FactoryList", "AttM")',
+                        data: { ZoneID: sv1, eid: session },
+                        type: 'post',
+                        cache: false,
+                        async: true,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $('#SearchParaMeter_FacID').empty();
+                                $('#SearchParaMeter_FacID').append($('<option></option>').val('').text('-- 請選擇廠別 --'));
+                                $.each(data, function (i, item) {
+                                    $('#SearchParaMeter_FacID').append(
+                                        $('<option></option>').val(item.Key).text(item.Value));
+                                });
+                            }
+
+                        }
+                    });
+                } else {
+                    $('#SearchParaMeter_FacID').empty();
+                    $('#SearchParaMeter_FacID').append($('<option></option>').val('').text('-- 請選擇廠別 --'));
+                }
+            });
+            //第二段連動
+            $("#SearchParaMeter_FacID").change(function () {
+                var sv1 = $('#SearchParaMeter_FacID option:selected').val();
+                if ($.trim(sv1).length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("DateList", "AttM")',
+                        data: { FacID: sv1 },
+                        type: 'post',
+                        cache: false,
+                        async: true,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.length > 0) {
+                                $('#SearchParaMeter_Date').empty();
+                                $('#SearchParaMeter_Date').append($('<option></option>').val('').text('-- 請選擇日期 --'));
+                                $.each(data, function (i, item) {
+                                    $('#SearchParaMeter_Date').append(
+                                        $('<option></option>').val(item.Key).text(item.Value));
+                                });
+                            }
+
+                        }
+                    });
+                } else {
+                    $('#SearchParaMeter_Date').empty();
+                    $('#SearchParaMeter_Date').append($('<option></option>').val('').text('-- 請選擇日期 --'));
+                }
+            });
+        });
+    </script>
+}
+
+
+
+
